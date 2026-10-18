@@ -51,7 +51,32 @@ Terraform state, variable files, and saved plans are excluded by `.gitignore`. K
 - Terraform `>= 1.5.0` and the AWS provider `~> 6.0`
 - `kubectl`
 - The required project IAM roles already present in the AWS account
-- Input values supplied locally, including the database password
+- Local Terraform inputs, including your own public IPv4 address and a database password
+
+## Configure local Terraform inputs
+
+Before running Terraform, create a local `terraform.tfvars` file in the repository root. Do not commit this file: it contains environment-specific values and a database password.
+
+The EKS public API endpoint is restricted by `cluster_endpoint_public_access_cidrs`. You must enter the **public IPv4 address of the machine from which you will run `kubectl`**, as a single-host CIDR ending in `/32`. Do not use your computer's private LAN address.
+
+Get your current public IPv4 address with:
+
+```bash
+curl -4 https://checkip.amazonaws.com
+```
+
+If the command returns `203.0.113.25`, for example, the CIDR format would be `203.0.113.25/32`. This is only an example address; replace it with your own actual public IPv4 address.
+
+Set the relevant values in `terraform.tfvars`:
+
+```hcl
+cluster_endpoint_public_access_cidrs = ["YOUR_PUBLIC_IPV4/32"]
+db_password                           = "REPLACE_WITH_A_STRONG_PASSWORD"
+```
+
+Keep the other required Terraform variables in the same file as appropriate for your environment. Never publish your real password or your local `terraform.tfvars` file.
+
+If your public IP changes later, update `cluster_endpoint_public_access_cidrs` to your new public IPv4 address in `/32` format and apply the Terraform change. Until the allowlist is updated, your client may be unable to reach the public EKS API endpoint. Do not use `0.0.0.0/0` as a workaround.
 
 ## Deployment and verification
 
