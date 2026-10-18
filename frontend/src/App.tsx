@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
-  Activity, Archive, ArrowDownUp, Check, ChevronLeft, ChevronRight, CircleHelp,
-  FileText, Filter, Folder, KeyRound, LayoutDashboard, LogOut, Menu, Plus,
-  Search, Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Trash2, Users,
+  Activity, Archive, Check, ChevronLeft, ChevronRight,
+  FileText, Filter, KeyRound, LayoutDashboard, LogOut, Plus,
+  Search, ShieldCheck, SlidersHorizontal, Sparkles, Trash2, Users,
   X, Clock3, Pencil, BookOpen,
 } from 'lucide-react';
-import { api, ApiError, refreshCsrf } from './api';
+import { api, refreshCsrf } from './api';
 import type { AdminUser, AppUser, AuditEvent, Note, Page } from './types';
 
 type Section = 'notes' | 'admin-users' | 'audit';
