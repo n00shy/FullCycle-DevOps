@@ -34,8 +34,9 @@ module "eks" {
   node_max_size      = var.node_max_size
 
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
-}
+  cni_role_arn                         = module.iam.eks_cni_role_arn
 
+}
 
 module "rds" {
   source = "./modules/rds"

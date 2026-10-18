@@ -38,3 +38,7 @@ variable "node_max_size" {
 variable "cluster_endpoint_public_access_cidrs" {
   type = list(string)
 }
+
+variable "cni_role_arn" {
+  type = string
+}
