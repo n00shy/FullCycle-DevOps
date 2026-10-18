@@ -8,17 +8,19 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.*;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 @RestController @RequestMapping("/api/auth")
 public class AuthController {
- private final AuthenticationManager manager; private final SecurityContextRepository contexts;
- public AuthController(AuthenticationManager manager,SecurityContextRepository contexts){this.manager=manager;this.contexts=contexts;}
+ private final AuthenticationManager manager; private final SecurityContextRepository contexts; private final SessionAuthenticationStrategy sessionStrategy;
+ public AuthController(AuthenticationManager manager,SecurityContextRepository contexts,SessionAuthenticationStrategy sessionStrategy){this.manager=manager;this.contexts=contexts;this.sessionStrategy=sessionStrategy;}
  @GetMapping("/csrf") public Map<String,String> csrf(CsrfToken token){return Map.of("headerName",token.getHeaderName(),"token",token.getToken());}
  @PostMapping("/login") public ResponseEntity<?> login(@Valid @RequestBody LoginRequest body,HttpServletRequest req,HttpServletResponse res){
   try {
    Authentication auth=manager.authenticate(UsernamePasswordAuthenticationToken.unauthenticated(body.username(),body.password()));
+    sessionStrategy.onAuthentication(auth,req,res);
    SecurityContext context=SecurityContextHolder.createEmptyContext();context.setAuthentication(auth);SecurityContextHolder.setContext(context);
    contexts.saveContext(context,req,res);AppUserDetails u=(AppUserDetails)auth.getPrincipal();
    return ResponseEntity.ok(new UserResponse(u.id(),u.username(),u.email(),u.role().name()));
