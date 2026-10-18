@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.*;
+import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.*;
 import java.util.List;
@@ -25,6 +27,7 @@ public class SecurityConfig {
  }
  @Bean AuthenticationManager authenticationManager(AuthenticationConfiguration config)throws Exception{return config.getAuthenticationManager();}
  @Bean SecurityContextRepository securityContextRepository(){return new HttpSessionSecurityContextRepository();}
+ @Bean SessionAuthenticationStrategy sessionAuthenticationStrategy(){return new ChangeSessionIdAuthenticationStrategy();}
  @Bean CookieCsrfTokenRepository csrfTokenRepository(){CookieCsrfTokenRepository r=CookieCsrfTokenRepository.withHttpOnlyFalse();r.setCookiePath("/");return r;}
  @Bean CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.allowed-origin}") String origin){
   CorsConfiguration c=new CorsConfiguration();c.setAllowedOrigins(List.of(origin));c.setAllowedMethods(List.of("GET","POST","PATCH","DELETE","OPTIONS"));
