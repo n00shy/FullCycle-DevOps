@@ -5,7 +5,7 @@ import java.time.Instant;
 @Entity @Table(name="audit_events")
 public class AuditEvent {
  @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Long id;
- @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="actor_user_id") private AppUser actor;
+ @ManyToOne(fetch=FetchType.EAGER) @JoinColumn(name="actor_user_id") private AppUser actor;
  @Column(nullable=false,length=80) private String action;
  @Column(name="entity_type",nullable=false,length=80) private String entityType;
  @Column(name="entity_id",length=80) private String entityId;
