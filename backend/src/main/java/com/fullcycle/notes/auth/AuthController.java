@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.*;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
