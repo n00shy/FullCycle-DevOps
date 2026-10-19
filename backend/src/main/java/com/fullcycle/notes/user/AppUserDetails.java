@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 public record AppUserDetails(Long id,String username,String password,String email,Role role,boolean enabled) implements UserDetails {
  public static AppUserDetails from(AppUser u){return new AppUserDetails(u.getId(),u.getUsername(),u.getPasswordHash(),u.getEmail(),u.getRole(),u.isEnabled());}
+ @Override public String getUsername(){return username;}
  @Override public Collection<? extends GrantedAuthority> getAuthorities(){return List.of(new SimpleGrantedAuthority("ROLE_"+role.name()));}
  @Override public String getPassword(){return password;}
  @Override public boolean isAccountNonExpired(){return true;}
