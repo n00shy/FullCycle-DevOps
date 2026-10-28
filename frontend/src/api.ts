@@ -43,12 +43,24 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   return data as T;
 }
 
+function readCookie(name: string): string {
+  const prefix = `${name}=`;
+  const item = document.cookie.split('; ').find(cookie => cookie.startsWith(prefix));
+  return item ? decodeURIComponent(item.slice(prefix.length)) : '';
+}
+
 export async function refreshCsrf(): Promise<void> {
   const response = await fetch(`${API_BASE}/api/auth/csrf`, { credentials: 'include' });
   if (!response.ok) throw new ApiError(response.status, 'Could not initialize secure session.');
-  const data = await response.json() as { headerName: string; token: string };
+  const data = await response.json() as { headerName: string };
   csrfHeaderName = data.headerName || 'X-XSRF-TOKEN';
-  csrfToken = data.token;
+
+  // Send the raw repository token from the XSRF-TOKEN cookie, not the
+  // XOR-encoded token exposed as a Spring Security request attribute.
+  csrfToken = readCookie('XSRF-TOKEN');
+  if (!csrfToken) {
+    throw new ApiError(403, 'CSRF cookie was not set. Check that the frontend and API use the same host.');
+  }
 }
 
 export const api = {
