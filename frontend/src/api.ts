@@ -65,10 +65,21 @@ export async function refreshCsrf(): Promise<void> {
 
 export const api = {
   async login(username: string, password: string) {
-    await refreshCsrf();
-    const user = await request<AppUser>('/api/auth/login', {
+    const submitLogin = () => request<AppUser>('/api/auth/login', {
       method: 'POST', body: JSON.stringify({ username, password }),
     });
+
+    await refreshCsrf();
+    let user: AppUser;
+    try {
+      user = await submitLogin();
+    } catch (error) {
+      // A stale CSRF cookie can be rejected before the login controller runs.
+      // Refresh once and retry only this login request; never bypass CSRF.
+      if (!(error instanceof ApiError) || error.status !== 403) throw error;
+      await refreshCsrf();
+      user = await submitLogin();
+    }
     await refreshCsrf();
     return user;
   },
