@@ -257,3 +257,7 @@ tbody tr:hover { background: #fcfdfb; }
   .editor-footer > div { width: 100%; }
   .editor-footer .button { flex: 1; }
 }
+
+.auth-mode-switch { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 18px; color: #858a80; font-size: 11px; }
+.auth-mode-switch button { padding: 3px 4px; border: 0; color: var(--green); background: transparent; font-size: 11px; font-weight: 700; }
+.auth-mode-switch button:hover { color: var(--green-dark); text-decoration: underline; }
