@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
   Activity, Archive, Check, ChevronLeft, ChevronRight,
-  FileText, Filter, KeyRound, LayoutDashboard, LogOut, Plus,
+  FileText, Filter, LayoutDashboard, LogOut, Plus,
   Search, ShieldCheck, SlidersHorizontal, Sparkles, Trash2, Users,
   X, Clock3, Pencil, BookOpen,
 } from 'lucide-react';
