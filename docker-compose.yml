@@ -21,7 +21,7 @@ services:
       context: ./backend
     container_name: fullcycle-backend-devops
     environment:
-      SERVER_PORT: 8082
+      SERVER_PORT: 8080
       DB_URL: jdbc:postgresql://postgres:5432/fullcycle_notes
       DB_USERNAME: notes_user
       DB_PASSWORD: local_dev_password
@@ -32,7 +32,7 @@ services:
       SESSION_COOKIE_SECURE: "false"
       APP_CORS_ALLOWED_ORIGIN: http://localhost:80
     ports:
-      - "8082:8082"
+      - "8082:8080"
     depends_on:
       postgres:
         condition: service_healthy
