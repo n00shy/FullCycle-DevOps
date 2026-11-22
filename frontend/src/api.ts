@@ -83,6 +83,13 @@ export const api = {
     await refreshCsrf();
     return user;
   },
+  async register(username: string, email: string, password: string) {
+    await refreshCsrf();
+    return request<AppUser>('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ username, email, password }),
+    });
+  },
   async me() { return request<AppUser>('/api/auth/me'); },
   async logout() {
     await refreshCsrf();

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
   Activity, Archive, Check, ChevronLeft, ChevronRight,
-  FileText, Filter, KeyRound, LayoutDashboard, LogOut, Plus,
+  FileText, Filter, LayoutDashboard, LogOut, Plus,
   Search, ShieldCheck, SlidersHorizontal, Sparkles, Trash2, Users,
   X, Clock3, Pencil, BookOpen,
 } from 'lucide-react';
 import { api, refreshCsrf } from './api';
+import AuthPage from './components/AuthPage';
 import type { AdminUser, AppUser, AuditEvent, Note, Page } from './types';
 
 type Section = 'notes' | 'admin-users' | 'audit';
@@ -24,10 +25,6 @@ function initials(user: AppUser) {
 export default function App() {
   const [user, setUser] = useState<AppUser | null>(null);
   const [booting, setBooting] = useState(true);
-  const [loginName, setLoginName] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [busy, setBusy] = useState(false);
   const [section, setSection] = useState<Section>('notes');
   const [notesPage, setNotesPage] = useState<Page<Note> | null>(null);
   const [query, setQuery] = useState('');
@@ -92,16 +89,6 @@ export default function App() {
     return [...found];
   }, [notesPage]);
 
-  async function handleLogin(event: FormEvent) {
-    event.preventDefault(); setLoginError(''); setBusy(true);
-    try {
-      const signedIn = await api.login(loginName.trim(), loginPassword);
-      setUser(signedIn); setLoginPassword(''); setSection('notes'); setNotice({ kind: 'success', text: 'You are signed in.' });
-    } catch (error) {
-      setLoginError(error instanceof Error ? error.message : 'Could not sign in.');
-    } finally { setBusy(false); }
-  }
-
   async function handleLogout() {
     try { await api.logout(); } catch { /* Clear local state even if the session already expired. */ }
     setUser(null); setNotesPage(null); setSection('notes'); setNotice(null);
@@ -164,36 +151,11 @@ export default function App() {
 
   if (booting) return <div className="boot-screen"><div className="brand-mark"><BookOpen size={22} /></div><span>Preparing your workspace…</span></div>;
 
-  if (!user) return (
-    <main className="auth-page">
-      <section className="auth-story">
-        <div className="brand-lockup"><div className="brand-mark"><BookOpen size={22} /></div><span>fullcycle<span className="brand-light">/notes</span></span></div>
-        <div className="story-copy">
-          <span className="eyebrow"><Sparkles size={14} /> A little more clarity, every day</span>
-          <h1>Your thoughts,<br /><em>in good order.</em></h1>
-          <p>A quieter place for the ideas, plans and little details you don't want to lose.</p>
-          <div className="story-foot"><span className="story-dot" /> Private by design <span className="story-separator">·</span> Made for focus</div>
-        </div>
-        <div className="story-decoration decoration-one" /><div className="story-decoration decoration-two" />
-      </section>
-      <section className="auth-panel">
-        <form className="login-card" onSubmit={handleLogin}>
-          <div className="mobile-brand brand-lockup"><div className="brand-mark"><BookOpen size={22} /></div><span>fullcycle<span className="brand-light">/notes</span></span></div>
-          <span className="eyebrow">YOUR WORKSPACE</span>
-          <h2>Welcome back</h2>
-          <p className="muted">Sign in to pick up where you left off.</p>
-          {loginError && <div className="alert alert-error" role="alert">{loginError}</div>}
-          <label className="field-label" htmlFor="login-name">Username or email</label>
-          <div className="input-wrap"><Users size={17} /><input id="login-name" autoComplete="username" value={loginName} onChange={e => setLoginName(e.target.value)} placeholder="you@example.com" required /></div>
-          <label className="field-label" htmlFor="login-password">Password</label>
-          <div className="input-wrap"><KeyRound size={17} /><input id="login-password" type="password" autoComplete="current-password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} placeholder="Enter your password" required /></div>
-          <button className="button button-primary login-submit" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'} <ChevronRight size={17} /></button>
-          <div className="secure-note"><ShieldCheck size={15} /> Your notes stay connected to your account.</div>
-        </form>
-        <span className="auth-copyright">FULLCYCLE NOTES <span>©</span> 2026</span>
-      </section>
-    </main>
-  );
+  if (!user) return <AuthPage onAuthenticated={(signedIn) => {
+    setUser(signedIn);
+    setSection('notes');
+    setNotice({ kind: 'success', text: 'You are signed in.' });
+  }} />;
 
   return (
     <div className="app-shell">
