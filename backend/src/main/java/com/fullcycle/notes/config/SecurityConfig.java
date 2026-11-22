@@ -100,7 +100,7 @@ public class SecurityConfig {
                 .securityContext(config -> config.securityContextRepository(contexts))
                 .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/csrf", "/api/auth/login",
+                        .requestMatchers("/api/auth/csrf", "/api/auth/login", "/api/auth/register",
                                 "/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
